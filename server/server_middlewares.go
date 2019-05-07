@@ -94,9 +94,6 @@ func (s *Server) buildMiddlewares(frontendName string, frontend *types.Frontend,
 	locationMiddleware := middlewares.NewLocationHeaderFromStruct(frontend.Headers)
 	if locationMiddleware != nil {
 		log.Debugf("Adding location middleware for frontend %s", frontendName)
-
-		handler := s.tracingMiddleware.NewNegroniHandlerWrapper("Location", locationMiddleware, false)
-		middle = append(middle, handler)
 	}
 
 	// Secure
