@@ -187,6 +187,8 @@
     PublicKey = "{{ $frontend.Headers.PublicKey }}"
     ReferrerPolicy = "{{ $frontend.Headers.ReferrerPolicy }}"
     IsDevelopment = {{ $frontend.Headers.IsDevelopment }}
+    LocationRegex = "{{ $frontend.Headers.LocationRegex }}"
+    LocationReplacement = "{{ $frontend.Headers.LocationReplacement }}"
     {{if $frontend.Headers.AllowedHosts }}
     AllowedHosts = [{{range $frontend.Headers.AllowedHosts }}
       "{{.}}",

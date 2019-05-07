@@ -90,6 +90,15 @@ func (s *Server) buildMiddlewares(frontendName string, frontend *types.Frontend,
 		middle = append(middle, handler)
 	}
 
+	// Location
+	locationMiddleware := middlewares.NewLocationHeaderFromStruct(frontend.Headers)
+	if locationMiddleware != nil {
+		log.Debugf("Adding location middleware for frontend %s", frontendName)
+
+		handler := s.tracingMiddleware.NewNegroniHandlerWrapper("Location", locationMiddleware, false)
+		middle = append(middle, handler)
+	}
+
 	// Secure
 	secureMiddleware := middlewares.NewSecure(frontend.Headers)
 	if secureMiddleware != nil {
@@ -132,7 +141,7 @@ func (s *Server) buildMiddlewares(frontendName string, frontend *types.Frontend,
 		middle = append(middle, handler)
 	}
 
-	return middle, buildModifyResponse(secureMiddleware, headerMiddleware), postConfig, nil
+	return middle, buildModifyResponse(secureMiddleware, headerMiddleware, locationMiddleware), postConfig, nil
 }
 
 func (s *Server) buildServerEntryPointMiddlewares(serverEntryPointName string, serverEntryPoint *serverEntryPoint) ([]negroni.Handler, error) {
@@ -335,7 +344,7 @@ func (s *Server) wrapHTTPHandlerWithAccessLog(handler http.Handler, frontendName
 	return handler
 }
 
-func buildModifyResponse(secure *secure.Secure, header *middlewares.HeaderStruct) func(res *http.Response) error {
+func buildModifyResponse(secure *secure.Secure, header *middlewares.HeaderStruct, location *middlewares.LocationHeaderStruct) func(res *http.Response) error {
 	return func(res *http.Response) error {
 		if secure != nil {
 			if err := secure.ModifyResponseHeaders(res); err != nil {
@@ -348,6 +357,13 @@ func buildModifyResponse(secure *secure.Secure, header *middlewares.HeaderStruct
 				return err
 			}
 		}
+
+		if location != nil {
+			if err := location.ModifyLocationHeader(res); err != nil {
+				return err
+			}
+		}
+
 		return nil
 	}
 }

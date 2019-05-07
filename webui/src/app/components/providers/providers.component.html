@@ -329,6 +329,24 @@
                             </table>
                           </div>
 
+                          <div class="column is-12" *ngIf="p.headers.locationRegex?.length && p.headers.locationReplacement?.length">
+                            <table class="table is-fullwidth is-hoverable table-fixed-break">
+                              <tbody>
+                                <tr>
+                                  <td colspan="2">Location Header Modifier</td>
+                                </tr>
+                                <tr *ngIf="p.headers.locationRegex">
+                                  <td><span class="has-text-grey">Regex</span></td>
+                                  <td><span class="has-text-grey">{{ p.headers.locationRegex }}</span></td>
+                                </tr>
+                                <tr *ngIf="p.headers.locationReplacement">
+                                  <td><span class="has-text-grey">Replacement</span></td>
+                                  <td><span class="has-text-grey">{{ p.headers.locationReplacement }}</span></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+
                           <div class="column is-12">
                             <table class="table is-fullwidth is-hoverable table-fixed-break">
                               <tbody>

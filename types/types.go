@@ -150,12 +150,21 @@ type Headers struct {
 	PublicKey               string            `json:"publicKey,omitempty"`
 	ReferrerPolicy          string            `json:"referrerPolicy,omitempty"`
 	IsDevelopment           bool              `json:"isDevelopment,omitempty"`
+
+	LocationRegex       string `json:"locationRegex,omitempty"`
+	LocationReplacement string `json:"locationReplacement,omitempty"`
 }
 
 // HasCustomHeadersDefined checks to see if any of the custom header elements have been set
 func (h *Headers) HasCustomHeadersDefined() bool {
 	return h != nil && (len(h.CustomResponseHeaders) != 0 ||
 		len(h.CustomRequestHeaders) != 0)
+}
+
+// HasLocationHeaderDefined checks to see if any of the `Location` header modification elements have been set
+func (h *Headers) HasLocationHeaderDefined() bool {
+	return h != nil && len(h.LocationRegex) > 0 &&
+		len(h.LocationReplacement) > 0
 }
 
 // HasSecureHeadersDefined checks to see if any of the secure header elements have been set

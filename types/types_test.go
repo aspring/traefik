@@ -23,6 +23,62 @@ func TestHeaders_ShouldReturnTrueWhenHasCustomHeadersDefined(t *testing.T) {
 	assert.True(t, headers.HasCustomHeadersDefined())
 }
 
+func TestHeaders_ShouldReturnFalseWhenNoLocationHeadersDefined(t *testing.T) {
+	headers := Headers{}
+
+	assert.False(t, headers.HasLocationHeaderDefined())
+}
+
+func TestHeaders_ShouldReturnFalseWhenOnlyLocationRegexDefined(t *testing.T) {
+	headers := Headers{}
+
+	headers.LocationRegex = "foo"
+
+	assert.False(t, headers.HasLocationHeaderDefined())
+}
+
+func TestHeaders_ShouldReturnFalseWhenLocationRegexEmpty(t *testing.T) {
+	headers := Headers{}
+
+	headers.LocationRegex = ""
+
+	assert.False(t, headers.HasLocationHeaderDefined())
+}
+
+func TestHeaders_ShouldReturnFalseWhenHasOnlyLocationReplacementDefined(t *testing.T) {
+	headers := Headers{}
+
+	headers.LocationReplacement = "bar"
+
+	assert.False(t, headers.HasLocationHeaderDefined())
+}
+
+func TestHeaders_ShouldReturnFalseWhenLocationReplacementEmpty(t *testing.T) {
+	headers := Headers{}
+
+	headers.LocationReplacement = ""
+
+	assert.False(t, headers.HasLocationHeaderDefined())
+}
+
+func TestHeaders_ShouldReturnFalseWhenHasLocationRegexAndReplacementEmptyDefined(t *testing.T) {
+	headers := Headers{}
+
+	headers.LocationRegex = ""
+	headers.LocationReplacement = ""
+
+	assert.False(t, headers.HasLocationHeaderDefined())
+}
+
+func TestHeaders_ShouldReturnTrueWhenHasLocationRegexAndReplacementDefined(t *testing.T) {
+	headers := Headers{}
+
+	headers.LocationRegex = "foo"
+	headers.LocationReplacement = "bar"
+
+	assert.True(t, headers.HasLocationHeaderDefined())
+}
+
 func TestHeaders_ShouldReturnFalseWhenNotHasSecureHeadersDefined(t *testing.T) {
 	headers := Headers{}
 

@@ -369,6 +369,25 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
+    ingress.kubernetes.io/location-regex: 'http://(.*)'
+    ingress.kubernetes.io/location-replacement: 'https://$1'
+    kubernetes.io/ingress.class: traefik
+  namespace: testing
+spec:
+  rules:
+  - host: location-header
+    http:
+      paths:
+      - backend:
+          serviceName: service1
+          servicePort: 80
+        path: /locationheader
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
     ingress.kubernetes.io/protocol: h2c
   namespace: testing
 spec:

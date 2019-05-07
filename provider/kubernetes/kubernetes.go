@@ -1112,9 +1112,11 @@ func getHeader(i *extensionsv1beta1.Ingress) *types.Headers {
 		PublicKey:               getStringValue(i.Annotations, annotationKubernetesPublicKey, ""),
 		ReferrerPolicy:          getStringValue(i.Annotations, annotationKubernetesReferrerPolicy, ""),
 		IsDevelopment:           getBoolValue(i.Annotations, annotationKubernetesIsDevelopment, false),
+		LocationRegex:           getStringValue(i.Annotations, annotationKubernetesLocationRegex, ""),
+		LocationReplacement:     getStringValue(i.Annotations, annotationKubernetesLocationReplacement, ""),
 	}
 
-	if !headers.HasSecureHeadersDefined() && !headers.HasCustomHeadersDefined() {
+	if !headers.HasSecureHeadersDefined() && !headers.HasCustomHeadersDefined() && !headers.HasLocationHeaderDefined() {
 		return nil
 	}
 
