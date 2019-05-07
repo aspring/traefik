@@ -369,15 +369,41 @@ func (c mockContext) Value(key interface{}) interface{} {
 
 func TestNewServerWithResponseModifiers(t *testing.T) {
 	testCases := []struct {
-		desc             string
-		headerMiddleware *middlewares.HeaderStruct
-		secureMiddleware *secure.Secure
-		ctx              context.Context
-		expected         map[string]string
+		desc               string
+		headerMiddleware   *middlewares.HeaderStruct
+		locationMiddleware *middlewares.LocationHeaderStruct
+		secureMiddleware   *secure.Secure
+		ctx                context.Context
+		expected           map[string]string
 	}{
 		{
-			desc:             "header and secure nil",
-			headerMiddleware: nil,
+			desc:               "header, secure and location nil",
+			headerMiddleware:   nil,
+			locationMiddleware: nil,
+			secureMiddleware:   nil,
+			ctx:                mockContext{},
+			expected: map[string]string{
+				"X-Default":       "powpow",
+				"Referrer-Policy": "same-origin",
+			},
+		},
+		// {
+		// 	desc:             "header and secure nil",
+		// 	headerMiddleware: nil,
+		// 	secureMiddleware: nil,
+		// 	ctx:              mockContext{},
+		// 	expected: map[string]string{
+		// 		"X-Default":       "powpow",
+		// 		"Referrer-Policy": "same-origin",
+		// 	},
+		// },
+		{
+			desc: "header middleware not nil",
+			headerMiddleware: middlewares.NewHeaderFromStruct(&types.Headers{
+				CustomResponseHeaders: map[string]string{
+					"X-Default": "powpow",
+				},
+			}),
 			secureMiddleware: nil,
 			ctx:              mockContext{},
 			expected: map[string]string{
@@ -386,11 +412,11 @@ func TestNewServerWithResponseModifiers(t *testing.T) {
 			},
 		},
 		{
-			desc: "header middleware not nil",
-			headerMiddleware: middlewares.NewHeaderFromStruct(&types.Headers{
-				CustomResponseHeaders: map[string]string{
-					"X-Default": "powpow",
-				},
+			desc:             "location middleware not nil",
+			headerMiddleware: nil,
+			locationMiddleware: middlewares.NewLocationHeaderFromStruct(&types.Headers{
+				LocationRegex:       "http://(.*)",
+				LocationReplacement: "https://$1",
 			}),
 			secureMiddleware: nil,
 			ctx:              mockContext{},
@@ -449,7 +475,7 @@ func TestNewServerWithResponseModifiers(t *testing.T) {
 				Header:  headers,
 			}
 
-			responseModifier := buildModifyResponse(test.secureMiddleware, test.headerMiddleware)
+			responseModifier := buildModifyResponse(test.secureMiddleware, test.headerMiddleware, test.locationMiddleware)
 			err := responseModifier(res)
 
 			assert.NoError(t, err)
